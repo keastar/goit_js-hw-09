@@ -1,3 +1,6 @@
+
+@import "./02-timer.css";
+
 * {
   box-sizing: border-box;
 }
@@ -16,3 +19,4 @@ img {
   display: block;
   max-width: 100%;
 }
+

@@ -1,0 +1,25 @@
+.timer {
+    display: flex;
+    max-width: 720px;
+    text-align: center;
+    margin: 20px 0;
+    justify-content: flex-start;
+}
+
+.timer div.field:not(:first-child) {
+    margin: 0 0 0 20px;
+}
+
+div.field {
+    display: block;
+    text-align: center;  
+
+}
+
+div.field span.value {
+    display: block;
+    font-size: 50px;
+    font-weight: 700px;
+    
+}
+
