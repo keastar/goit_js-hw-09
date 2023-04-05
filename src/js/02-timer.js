@@ -1,4 +1,3 @@
-const flatpickr = require("flatpickr");
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 
@@ -13,7 +12,7 @@ import "flatpickr/dist/flatpickr.min.css";
 // import { Block } from 'notiflix/build/notiflix-block-aio';
 
 const refs = {
-    dateInputEl: document.querySelector('.flatpickr .js-flatpickr-dateTime'),
+    dateInputEl: document.querySelector('#datetime-picker'),
     startBtn: document.querySelector('button[data-start]'),
     clockFace: document.querySelector('.timer'),
 };
@@ -25,6 +24,9 @@ const data = {
     seconds: document.querySelector('[data-seconds]'),
 };
 
+let IntervalId;
+
+
 const options = {
     enableTime: true,
     time_24hr: true,
@@ -33,47 +35,39 @@ const options = {
     dateFormat: 'Y-m-d H:i',
     defaultDate: new Date(),
     minuteIncrement: 1,
-    onClose(selectedDates) {
-        console.log(selectedDates[0]);
-    }
+    onClose: (selectedDates) => {
+        console.log(selectedDates);
+         if (selectedDates[0] < new Date()) {
+             window.alert('please choose another date in the future');
+             refs.startBtn.addAttribute('disabled');
+         } else {
+             refs.startBtn.removeAttribute('disabled');
+
+        }
+    },
 };
 
-flatpickr(refs.dateInputEl, options);
 
 refs.startBtn.addEventListener('click', () => {
-    const selectedDate = refs.dateInputEl.value;
-    const currentDate = new Date();
-    const targetDate = new Date(selectedDate);
+    const targetTime = fp.selectedDates[0];
+    clearInterval(IntervalId);
+                 IntervalId = setInterval(() => {
+                     const deltaTime =  targetTime - new Date();
+                     const { days, hours, minutes, seconds } = convertMs(deltaTime);
+                     // Update the timer interface
+                     data.days.textContent = days;
+                     data.hours.textContent = hours;
+                     data.minutes.textContent = minutes;
+                     data.seconds.textContent = seconds;
+                     if (deltaTime <= 1000) {
+                         clearInterval(IntervalId);
+                     }
+                 }, 1000);
+                 
+             });
 
-    if (targetDate < currentDate) {
-        window.alert('please choose another date in the future');
-        return;
-    }
-    const ms = targetDate - currentDate;
-    const time = convertMs(ms);
-
-    // Update the timer interface
-    data.days.innerText = time.days;
-    data.hours.innerText = time.hours;
-    data.minutes.innerText = time.minutes;
-    data.seconds.innerText = time.seconds;
-
-    const interval = setInterval(() => {
-        const ms = targetDate - new Date();
-        const { days, hours, minutes, seconds } = convertMs(ms);
-        // console.log('currentTime:', currentTime);
-        // console.log('startTime:', startTime);
-        // console.log(timeComponents);
-        data.days.innerText = time.days;
-        data.hours.innerText = time.hours;
-        data.minutes.innerText = time.minutes;
-        data.seconds.innerText = time.seconds;
-        
-        if (ms <= 1000) {
-            clearInterval(interval);
-        }
-    }, 1000);
-});
+const fp = flatpickr(refs.dateInputEl, options);
+// console.log(fp);
 
 function addLeadingZero(value) {
     return String(value).padStart(2, '0');
