@@ -18,8 +18,14 @@ const refs = {
     clockFace: document.querySelector('.timer'),
 };
 
+const data = {
+    days: document.querySelector('[data-days]'),
+    hours: document.querySelector('[data-hours]'),
+    minutes: document.querySelector('[data-minutes]'),
+    seconds: document.querySelector('[data-seconds]'),
+};
 
-flatpickr('.refs .js-flatpickr-dateTime', {
+const options = {
     enableTime: true,
     time_24hr: true,
     altInput: true,
@@ -29,54 +35,45 @@ flatpickr('.refs .js-flatpickr-dateTime', {
     minuteIncrement: 1,
     onClose(selectedDates) {
         console.log(selectedDates[0]);
-        }
-    },
-);
-
-
-// function updateClockface({ days, hours, minutes, seconds }) {
-    
-// }
-
-
-const timer = {
-    intervalId: null,
-    isActive: false,
-
-    start() {
-        if (this.isActive) {
-            return;
-        }
-
-        const startTime = Date.now(); 
-        this.isActive = true;
-
-
-        this.intervalId = setInterval(() => {
-            const currentTime = Date.now();
-            const ms = currentTime - startTime;
-            const { days, hours, minutes, seconds } = convertMs(ms);
-            // console.log('currentTime:', currentTime);
-            // console.log('startTime:', startTime);
-            // console.log(timeComponents);
-            console.log(`${days}:${hours}:${minutes}:${seconds}`);
-        }, 1000);
-        
-    },
-
-    stop() {
-        clearInterval(this.intervalId);
-        this.isActive = false;
-    }, 
+    }
 };
 
-
+flatpickr(refs.dateInputEl, options);
 
 refs.startBtn.addEventListener('click', () => {
-    timer.start();
+    const selectedDate = refs.dateInputEl.value;
+    const currentDate = new Date();
+    const targetDate = new Date(selectedDate);
+
+    if (targetDate < currentDate) {
+        window.alert('please choose another date in the future');
+        return;
+    }
+    const ms = targetDate - currentDate;
+    const time = convertMs(ms);
+
+    // Update the timer interface
+    data.days.innerText = time.days;
+    data.hours.innerText = time.hours;
+    data.minutes.innerText = time.minutes;
+    data.seconds.innerText = time.seconds;
+
+    const interval = setInterval(() => {
+        const ms = targetDate - new Date();
+        const { days, hours, minutes, seconds } = convertMs(ms);
+        // console.log('currentTime:', currentTime);
+        // console.log('startTime:', startTime);
+        // console.log(timeComponents);
+        data.days.innerText = time.days;
+        data.hours.innerText = time.hours;
+        data.minutes.innerText = time.minutes;
+        data.seconds.innerText = time.seconds;
+        
+        if (ms <= 1000) {
+            clearInterval(interval);
+        }
+    }, 1000);
 });
-
-
 
 function addLeadingZero(value) {
     return String(value).padStart(2, '0');
