@@ -6,7 +6,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 // import Notiflix from 'notiflix';
 
 // one by one
-// import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 // import { Report } from 'notiflix/build/notiflix-report-aio';
 // import { Confirm } from 'notiflix/build/notiflix-confirm-aio';
 // import { Loading } from 'notiflix/build/notiflix-loading-aio';
@@ -41,7 +41,7 @@ const options = {
     //если первая выбранная дата раньше текущей даты, то предупреждение - по выбору даты из будущего
     // и кнопка старт - неактивна
     if (selectedDates[0] < new Date()) {
-      window.alert('please choose another date in the future');
+      Notify.warning('please choose another date in the future');
       refs.startBtn.addAttribute('disabled');
       // в другом случае кнопка старт активна
     } else {
